@@ -1,4 +1,8 @@
 const express = require('express');
+const axios = require('axios');
+const mongoose = require('mongoose');
+const mongo = require('../database/index.js')
+
 let app = express();
 
 app.use(express.static(__dirname + '/../client/dist'));
