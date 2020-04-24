@@ -1,8 +1,8 @@
 const express = require('express');
 const axios = require('axios');
-const mongoose = require('mongoose');
-const mongo = require('../database/index.js')
+
 const getReposByUserName = require('../helpers/github.js');
+const { save } = require('../database/index.js');
 
 let app = express();
 
@@ -22,7 +22,16 @@ app.post('/repos', function (req, res) {
 
   getReposByUserName(Object.keys(req.body)[0], (err, data) => {
     if(!err) {
+
       console.log('\nGithub data => ', data);
+
+      save(data, (err, data) => {
+        if(!err) {
+          res.status(201).send(data)
+        } else {
+          res.status(400).send(err)
+        }
+      });
     } else {
       console.log('\nerror => ', err)
     }

@@ -3,8 +3,6 @@ const config = require('../config.js');
 
 const githubURL = 'https://api.github.com';
 
-console.log('token => ', config.TOKEN)
-
 let getReposByUsername = (userName, callback) => {
   // TODO - Use the request module to request repos for a specific user from the github API
 
