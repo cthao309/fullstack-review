@@ -18,12 +18,12 @@ app.post('/repos', function (req, res) {
   // and get the repo information from the github API, then
   // save the repo information in the database
 
-  console.log('POST request from client => ', req.body)
+  // console.log('POST request from client => ', req.body)
 
   getReposByUserName(Object.keys(req.body)[0], (err, data) => {
     if(!err) {
 
-      console.log('\nGithub data => ', data);
+      // console.log('\nGithub data => ', data);
 
       save(data, (err, msg) => {
         if(!err) {
@@ -41,11 +41,15 @@ app.post('/repos', function (req, res) {
 app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
-  limitData(3, (err, data) => {
+
+  // note limitData takes in an interger (the desire number of record) and an anonymous function callback
+  limitData(25, (err, data) => {
     if(!err) {
       console.log('25 query: ', data)
+      res.status(200).send(data)
     } else {
       console.log('Error 25 query: ', err)
+      res.status(500).send(err);
     }
   })
 });

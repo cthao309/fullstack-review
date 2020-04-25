@@ -11,6 +11,29 @@ class App extends React.Component {
       repos: []
     }
 
+    this.retreiveLatest25Repos = this.retreiveLatest25Repos.bind(this);
+  }
+
+  componentDidMount() {
+    console.log('$$$$ componentDidMount $$$$');
+    this.retreiveLatest25Repos();
+  }
+
+  retreiveLatest25Repos() {
+    $.ajax({
+      type: 'GET',
+      url: 'http://localhost:1128/repos',
+      success: (data) => {
+        let parsedData = JSON.parse(data);
+
+        console.log('Top 25 repos => ', parsedData);
+
+        this.setState({ repos: parsedData });
+      },
+      error: (err) => {
+        console.log('Error: GET request => ', err)
+      }
+    })
   }
 
   search (term) {
@@ -24,19 +47,21 @@ class App extends React.Component {
       data: term,
       success: (msg) => {
         console.log('Successful POST: ', msg);
+        this.retreiveLatest25Repos();
       },
       error: (err) => {
         console.log('Error: POST => ', err);
       }
     });
 
+
   }
 
   render () {
     return (<div>
       <h1>Github Fetcher</h1>
-      <RepoList repos={this.state.repos}/>
       <Search onSearch={this.search.bind(this)}/>
+      <RepoList repos={this.state.repos}/>
     </div>)
   }
 }
