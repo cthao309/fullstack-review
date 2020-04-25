@@ -67,7 +67,7 @@ let save = (data, callback) => {
     )
   }
 
-  callback(null, 'Data is save in mongo')
+  callback(null, {length: repos.length})
 
 }
 

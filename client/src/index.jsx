@@ -8,7 +8,9 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      repos: []
+      repos: [],
+      repoImportedAmount: 0,
+      isPostRequest: false,
     }
 
     this.retreiveLatest25Repos = this.retreiveLatest25Repos.bind(this);
@@ -47,7 +49,13 @@ class App extends React.Component {
       data: term,
       success: (msg) => {
         console.log('Successful POST: ', msg);
+
         this.retreiveLatest25Repos();
+
+        this.setState({
+          repoImportedAmount: msg,
+          isPostRequest: true
+        })
       },
       error: (err) => {
         console.log('Error: POST => ', err);
@@ -61,7 +69,11 @@ class App extends React.Component {
     return (<div>
       <h1>Github Fetcher</h1>
       <Search onSearch={this.search.bind(this)}/>
-      <RepoList repos={this.state.repos}/>
+      <RepoList
+        repos={this.state.repos}
+        repoImportedAmount={this.state.repoImportedAmount}
+        isPostRequest={this.state.isPostRequest}
+      />
     </div>)
   }
 }

@@ -25,9 +25,9 @@ app.post('/repos', function (req, res) {
 
       // console.log('\nGithub data => ', data);
 
-      save(data, (err, msg) => {
+      save(data, (err, dataLength) => {
         if(!err) {
-          res.status(201).send(msg)
+          res.status(201).send(dataLength)
         } else {
           res.status(400).send(err)
         }
