@@ -10,20 +10,26 @@ let repoSchema = mongoose.Schema({
   id: Number,
   name: String,
   full_name: String,
+  created_at: String,
   owner: {}
 });
 
 let Repo = mongoose.model('Repo', repoSchema);
 
 // function to check if there already exist the same repo in the database
-let isRepoExist = () => {
+let limitData = (num, callback) => {
   let repos = mongoose.model('Repo');
 
-  repos.find({}, function(err, data) {
-    if(!err) {
-      console.log('Mongo database => ', data)
-    }
-  })
+  repos.find()
+          .sort({ "created_at-": -1 })
+          .limit(num)
+          .exec((err, data) => {
+            if(!err) {
+              callback(null, data)
+            } else {
+              callback(err, null)
+            }
+          });
 }
 
 let save = (data, callback) => {
@@ -34,33 +40,36 @@ let save = (data, callback) => {
   // console.log('data to be save => ', JSON.parse(data))
 
   let repos = JSON.parse(data);
-  console.log('repos[0].owner => ', repos[0].owner)
+  // console.log('repos[0].owner => ', repos[0].owner)
 
-  let newMode = new Repo({
-    id: repos[0].id,
-    name: repos[0].name,
-    full_name: repos[0].full_name,
-    owner: {
-      login: repos[0].owner.login,
-      id: repos[0].owner.id,
-      url: repos[0].owner.url,
-      repos_url: repos[0].owner.repos_url,
-      type: repos[0].owner.type
-    }
-  });
+  let counter = 0;
 
-  console.log('\n\nmodel to be save => ', newMode)
-
-  newMode.save((err) => {
-    if(!err) {
-      console.log('data is save in successfully')
-      callback('Successfully save data to mongo database')
-    } else {
-      console.log('Fail to save data in mongo: err => ', err)
-      callback('Fail to save data in mongo')
-    }
-  });
+  for(let i = 0; i < repos.length; i++) {
+    let newMode = new Repo({
+      id: repos[i].id,
+      name: repos[i].name,
+      full_name: repos[i].full_name,
+      created_at: repos[i].created_at,
+      owner: {
+        login: repos[i].owner.login,
+        id: repos[i].owner.id,
+        url: repos[i].owner.url,
+        repos_url: repos[i].owner.repos_url,
+        type: repos[i].owner.type
+      }
+    }).save((err) => {
+      if(!err) {
+        console.log('data is save in successfully')
+        // callback('Fail to save data in mongo', null)
+      } else {
+        console.log('Fail to save data in mongo: err => ', err)
+      }
+    });
+  }
 
 }
 
-module.exports.save = save;
+module.exports = {
+  save,
+  limitData
+}

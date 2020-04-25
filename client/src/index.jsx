@@ -22,8 +22,8 @@ class App extends React.Component {
       type: 'POST',
       url: 'http://localhost:1128/repos',
       data: term,
-      success: () => {
-        console.log('Successful POST');
+      success: (msg) => {
+        console.log('Successful POST: ', msg);
       },
       error: (err) => {
         console.log('Error: POST => ', err);

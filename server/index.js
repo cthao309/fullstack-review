@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios');
 
 const getReposByUserName = require('../helpers/github.js');
-const { save } = require('../database/index.js');
+const { save, limitData } = require('../database/index.js');
 
 let app = express();
 
@@ -25,9 +25,9 @@ app.post('/repos', function (req, res) {
 
       console.log('\nGithub data => ', data);
 
-      save(data, (err, data) => {
+      save(data, (err, msg) => {
         if(!err) {
-          res.status(201).send(data)
+          res.status(201).send(msg)
         } else {
           res.status(400).send(err)
         }
@@ -41,6 +41,13 @@ app.post('/repos', function (req, res) {
 app.get('/repos', function (req, res) {
   // TODO - your code here!
   // This route should send back the top 25 repos
+  limitData(3, (err, data) => {
+    if(!err) {
+      console.log('25 query: ', data)
+    } else {
+      console.log('Error 25 query: ', err)
+    }
+  })
 });
 
 let port = 1128;
